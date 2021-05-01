@@ -1,22 +1,91 @@
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/entry2table.css') }}">
 <div class="entry">
   <h2>Entry 2</h2>
   <div class="entry_content">
     <p>
-      <it>Under Works..</it>
       This example shows a table of items available in the grand exchange. 
-      The table shows the current buy/sell price, the ROI%, the buy/sell quantity, 
-      among other interesting pieces of information. 
+      The table shows some sample data fetched from the API.
       <br><br>
-      The items in the table will be fetched from the OSRS Wiki api 
+      The items in the table will be fetched from the OSRS Wiki API 
       'https://prices.runescape.wiki/api/v1/osrs/' since it turns out that this API
       is more complete and also has nearly real-time information about the prices.
+      <br><br>
+      The data in the table contains is everything fetched from the /mapping endpoint from the first 5 items.
     </p>
-
-    <p>Table:</p>
-
     <div>
-      <table>
-        <caption>TODO!</caption>
+      <table id=entry2table>
+        <tr>
+          <!--
+          <th>Item</th>
+          <th>Current Price</th>
+          <th>Approx. Offer Price</th>
+          <th>Approx. Sell Price</th>
+          <th>Approx. Profit</th>
+          <th>Roi%</th>
+          <th>Buy Qty./Hr.</th>
+          <th>Sell Qty/Hr.</th>
+          <th>Buy/Sell Ratio</th>
+          <th>Sell Ratio</th>
+          -->
+          <th>name</th>
+          <th>id</th>
+          <th>members</th>
+          <th>lowalch</th>
+          <th>limit</th>
+          <th>value</th>
+          <th>highalch</th>
+          <tH>icon</tH>
+        </tr>
+        <tr>
+          <td>{{items[0].name}}</td>
+          <td>{{items[0].id}}</td>
+          <td>{{items[0].members}}</td>
+          <td>{{items[0].lowalch}}</td>
+          <td>{{items[0].limit}}</td>
+          <td>{{items[0].value}}</td>
+          <td>{{items[0].highalch}}</td>
+          <td>{{items[0].icon}}</td>
+        </tr>
+        <tr>
+          <td>{{items[1].name}}</td>
+          <td>{{items[1].id}}</td>
+          <td>{{items[1].members}}</td>
+          <td>{{items[1].lowalch}}</td>
+          <td>{{items[1].limit}}</td>
+          <td>{{items[1].value}}</td>
+          <td>{{items[1].highalch}}</td>
+          <td>{{items[1].icon}}</td>
+        </tr>
+        <tr>
+          <td>{{items[2].name}}</td>
+          <td>{{items[2].id}}</td>
+          <td>{{items[2].members}}</td>
+          <td>{{items[2].lowalch}}</td>
+          <td>{{items[2].limit}}</td>
+          <td>{{items[2].value}}</td>
+          <td>{{items[2].highalch}}</td>
+          <td>{{items[2].icon}}</td>
+        </tr>
+        <tr>
+          <td>{{items[3].name}}</td>
+          <td>{{items[3].id}}</td>
+          <td>{{items[3].members}}</td>
+          <td>{{items[3].lowalch}}</td>
+          <td>{{items[3].limit}}</td>
+          <td>{{items[3].value}}</td>
+          <td>{{items[3].highalch}}</td>
+          <td>{{items[3].icon}}</td>
+        </tr>
+        <tr>
+          <td>{{items[4].name}}</td>
+          <td>{{items[4].id}}</td>
+          <td>{{items[4].members}}</td>
+          <td>{{items[4].lowalch}}</td>
+          <td>{{items[4].limit}}</td>
+          <td>{{items[4].value}}</td>
+          <td>{{items[4].highalch}}</td>
+          <td>{{items[4].icon}}</td>
+        </tr>
       </table>
     </div>
   </div> <!-- Entry Content -->
