@@ -2,6 +2,7 @@
 body {
     background-color:rgb(243, 239, 236);
     margin: 0;
+    min-width: 1200px;
 }
 
 .topnav {
