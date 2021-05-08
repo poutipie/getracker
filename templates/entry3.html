@@ -31,8 +31,55 @@
 
     <p>Table:</p>
     <div>
-      <table id=entry2table>
-        <caption>TODO!</caption>
+
+      <!-- TODO ROI% -->
+
+      <!--
+        mapping1_table = [{
+        'examine': mapping1['examine'], 
+        'id': mapping1['id'], 
+        'members': mapping1['members'], 
+        'lowalch': mapping1['lowalch'], 
+        'limit': mapping1['limit'], 
+        'value': mapping1['value'], 
+        'highalch': mapping1['highalch'], 
+        'icon': mapping1['icon'], 
+        'name': mapping1['name'],
+        'high_price': mapping1_hl['high']
+        'low_price': mapping1_hl['low']
+        'volume':    mapping_vols[mapping1['id']]
+    }]
+      -->
+
+      <table id=entry3table class="entrytable">
+        <tr>
+          <th>Name</th>
+          <th>ID</th>
+          <th>Value</th>
+          <th>High Price</th>
+          <th>Low_Price</th>
+          <th>ROI%</th>
+          <th>Volume</th>
+          <th>GE limit (4h)</th>
+          <th>Members Only</th>
+          <th>Low Alch.</th>
+          <th>High Alch.</th>
+        </tr>
+        {% for item in entry3items %}
+        <tr>
+          <td>{{item.name}}</td>
+          <td>{{item.id}}</td>
+          <td>{{item.value}}</td>
+          <td>{{item.high_price}}</td>
+          <td>{{item.low_price}}</td>
+          <td>{{item.roi}}</td>
+          <td>{{item.volume}}</td>
+          <td>{{item.limit}}</td>
+          <td>{{item.members}}</td>
+          <td>{{item.lowalch}}</td>
+          <td>{{item.highalch}}</td>
+        </tr>
+        {% endfor %}
       </table>
     </div>
   </div> <!-- Entry Content -->
