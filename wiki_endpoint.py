@@ -33,4 +33,6 @@ class WikiEndpoint():
         latest_ep: str = "{}/{}".format(WikiEndpoint._OSRS_WIKI_API, "latest")
         url: str = "{}?id={}".format(latest_ep, id)
 
-        return WikiEndpoint.session().get(url).json()['data'][str(id)]
+        res = WikiEndpoint.session().get(url).json()['data'][str(id)]
+
+        return res

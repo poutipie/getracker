@@ -12,8 +12,23 @@ CREATE TABLE IF NOT EXISTS Item (
   [high_alch]   INTEGER                NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS ItemIndexMeta (
+CREATE TABLE IF NOT EXISTS ItemIndexTime (
   [id]          INTEGER PRIMARY KEY    AUTOINCREMENT,
 
-  [updated_in]  DATE                   NOT NULL
+  [indexed_at]  DATE                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Volume (
+  [id]          INTEGER PRIMARY KEY    AUTOINCREMENT,
+
+  [volume]      INTEGER                NOT NULL,
+  [item_id]     INTEGER                NOT NULL,
+
+  FOREIGN KEY(item_id)  REFERENCES Item(id)
+);
+
+CREATE TABLE IF NOT EXISTS VolumeIndexTime(
+  [id]          INTEGER PRIMARY KEY    AUTOINCREMENT,
+
+  [indexed_at]  DATE                   NOT NULL
 );

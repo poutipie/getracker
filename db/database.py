@@ -4,7 +4,8 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional
 
-from .schema.item import Item, ItemIndexMeta
+from .schema.item import Item, ItemIndexTime
+from .schema.volume import Volume, VolumeIndexTime
 from ..wiki_endpoint import WikiEndpoint
 
 class Database():
@@ -47,25 +48,72 @@ class Database():
     @staticmethod
     def reindex_osrs_wiki(db: sqlite3.Connection):
 
+        if Database.osrs_items_reindex_needed(db):
+            Database.reindex_osrs_items(db)
+
+        if Database.osrs_volumes_reindex_needed(db):
+            Database.reindex_osrs_volumes(db) 
+
+    @staticmethod
+    def osrs_items_reindex_needed(db: sqlite3.Connection) -> bool:
+
         cur = db.cursor()
-        cur.execute("SELECT * FROM ItemIndexMeta")
-        meta_data = cur.fetchall()
+        cur.execute("SELECT * FROM ItemIndexTime")
+        item_idx_t = cur.fetchall()
 
-        time_diff: Optional[timedelta] = None
-        if meta_data:
+        t_since: Optional[timedelta] = None
+        if item_idx_t:
             f = '%Y-%m-%d %H:%M:%S'
-            utc_then = datetime.strptime(meta_data[0][1], f)
+            utc_then = datetime.strptime(item_idx_t[0][1], f)
             utc_now = datetime.utcnow()
-            time_diff = (utc_now - utc_then)
+            t_since = (utc_now - utc_then)
 
-        reindex_interval = timedelta(hours=3)
-        if time_diff is None or time_diff >= reindex_interval:
+        item_interval = timedelta(hours=3)
 
-            cur.execute("DELETE FROM Item WHERE True")
-            cur.execute("DELETE FROM ItemIndexMeta WHERE True")
+        return not t_since or len(item_idx_t) > 1 or t_since >= item_interval
 
-            items_json = WikiEndpoint.fetch_items()
-            for item in items_json:
-                Item.insert(item, db)
-            ItemIndexMeta.insert(db)
-            db.commit()
+    @staticmethod
+    def reindex_osrs_items(db: sqlite3.Connection):
+        
+        cur = db.cursor()
+
+        cur.execute("DELETE FROM Item WHERE True")
+        cur.execute("DELETE FROM ItemIndexTime WHERE True")
+
+        items_json = WikiEndpoint.fetch_items()
+        for item in items_json:
+            Item.insert(item, db)
+        ItemIndexTime.insert(db)
+        db.commit()
+
+    @staticmethod
+    def osrs_volumes_reindex_needed(db: sqlite3.Connection) -> bool:
+        
+        cur = db.cursor()
+        cur.execute("SELECT * FROM VolumeIndexTime")
+        vol_idx_t = cur.fetchall()
+
+        t_since: Optional[timedelta] = None
+        if vol_idx_t:
+            f = '%Y-%m-%d %H:%M:%S'
+            utc_then = datetime.strptime(vol_idx_t[0][1], f)
+            utc_now = datetime.utcnow()
+            t_since = (utc_now - utc_then)
+
+        vol_interval = timedelta(hours=6)
+
+        return not vol_idx_t or len(vol_idx_t) > 1 or t_since >= vol_interval
+
+    @staticmethod
+    def reindex_osrs_volumes(db: sqlite3.Connection):
+
+        cur = db.cursor()
+
+        cur.execute("DELETE FROM Volume WHERE True")
+        cur.execute("DELETE FROM VolumeIndexTime WHERE True")
+
+        volumes_json = WikiEndpoint.fetch_volumes()
+        for item_id, volume in volumes_json.items():
+            Volume.insert(int(item_id), volume, db)
+        VolumeIndexTime.insert(db)
+        db.commit()

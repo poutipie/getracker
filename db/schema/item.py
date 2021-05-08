@@ -59,10 +59,10 @@ class Item(NamedTuple):
 
         cursor.execute(sql, item)
 
-class ItemIndexMeta(NamedTuple):
+class ItemIndexTime(NamedTuple):
 
     id: int
-    updated_in: str
+    indexed_at: str
 
 
     @staticmethod
@@ -71,8 +71,8 @@ class ItemIndexMeta(NamedTuple):
         cursor = db.cursor()
 
         sql = (
-            " INSERT INTO ItemIndexMeta "
-            " (updated_in) "
+            " INSERT INTO ItemIndexTime "
+            " (indexed_at) "
             " VALUES(CURRENT_TIMESTAMP) "
         )
 

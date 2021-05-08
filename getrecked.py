@@ -9,12 +9,11 @@ from typing import List
 from .commons import Commons
 from .db.database import Database
 from .db.schema.item import Item
+from .db.schema.volume import Volume
 from .wiki_endpoint import WikiEndpoint
 
-VOLUMES = None
-
 @dataclass
-class ItemOverview:
+class Entry3Item:
     name: str
     examine: str
     id: int
@@ -32,18 +31,17 @@ class ItemOverview:
 
 @app.route('/')
 def root():
-    
-    VOLUMES = WikiEndpoint.fetch_volumes()
 
     labels, values = make_data_for_demograph()
-
     items: List[Item] = fetch_data_for_entry2table()
-    entry3items = fetch_data_for_entry3_table(items, VOLUMES)
+    
+    entry3items = fetch_data_for_entry3_table(items)
+
     return render_template(
         'index.html', 
         labels=labels[:], 
         values=values[:], 
-        items=items[:15], 
+        items=items, 
         entry3items=entry3items
     )
 
@@ -75,19 +73,27 @@ def fetch_data_for_entry2table() -> List[Item]:
         items_dc.append(Item(*item))
     return items_dc
 
-def fetch_data_for_entry3_table(items: List[Item], volumes):
+def fetch_data_for_entry3_table(items: List[Item]) -> List[Entry3Item]:
 
-    entry3_data = []
+    entry3_data: List[Entry3Item] = []
     for item in items:
-        record = fetch_record_data_for_item_mapping(item, volumes)
+        record = fetch_entry3item_data(item)
         entry3_data.append(record)
 
     return entry3_data
 
-def fetch_record_data_for_item_mapping(item: Item, volumes):
+def fetch_entry3item_data(item: Item) -> Entry3Item:
+
+    db = Database()
+    cur = db.get_db().cursor()
+    
+    cur.execute("SELECT * FROM Volume WHERE Volume.item_id==?", (item.id, ))
+    match = cur.fetchall()
+    assert len(match) == 1, "There should be one volume per item"
+    item_vol: Volume = Volume(*match[0])
 
     item_hl = WikiEndpoint.fetch_high_low_data(item.id)
-    record = ItemOverview(
+    record = Entry3Item(
         name = item.name,
         examine = item.examine,
         id = item.id,
@@ -100,7 +106,7 @@ def fetch_record_data_for_item_mapping(item: Item, volumes):
         high_price = item_hl['high'],
         low_price = item_hl['low'],
         roi = ((item_hl['high'] / item_hl['low']) - 1) * 100,
-        volume = volumes[str(item.id)]
+        volume = item_vol.volume
     )
 
     return record
