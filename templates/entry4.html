@@ -15,32 +15,70 @@
 
     </p>
 
-    <ul id="entry4testlist">
-      <li>Coffee</li>
-      <li>Tea</li>
-      <li>Milk</li>
-    </ul> 
+    <div class="chart_container">
+      <canvas id="entry4chart"></canvas>
+    </div>
 
     <script>
-      
+
+      // Globals for chart.js.. :C
+      chart = null;
+
       function addRowHandlers() {
         let e3table = document.getElementById("entry3table");
         let handler_deco = function(row) {
           return function() {
-            let httpx = new XMLHttpRequest();
-            httpx.open("POST", "graph_data", true);
-            httpx.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                let text = this.responseText;
-                let elem = document.getElementById("entry4testlist");
-                let entry = document.createElement('li');
-                entry.appendChild(document.createTextNode(text));
-                elem.appendChild(entry);
-              };
-            };
-            httpx.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-            payload = `{"item_name": "${row.cells[0].innerText}"}`;
-            httpx.send(payload);
+
+            let payload = `
+            {
+              "item_name": "${row.cells[0].innerText}",
+              "item_id": "${row.cells[1].innerText}"
+            }`;
+
+            fetch("graph_data", 
+            {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: payload
+            }).then(function(response) 
+            {
+              return response.json();
+            }).then(function(jsonResponse)
+            {
+                var context = document.getElementById("entry4chart").getContext("2d")
+                if (chart != null) {
+                  chart.destroy();
+                };
+                chart = new Chart(context, 
+                {
+                  type: "line",
+                  data: {
+                    labels: jsonResponse.timestamp,
+                    datasets: [
+                      {
+                        label: row.cells[0].innerText,
+                        data: jsonResponse.price,
+                        borderColor: "rgb(75, 192, 192)",
+                        lineTension: 0.1,
+                      }
+                    ]
+                  },
+                  options: {
+                    responsive: true,
+                    scales: {
+                      xAxes: [{
+                        type: 'time',
+                        time: {
+                          parser: 'YYYY/MM/DD HH:mm:ss',
+                          displayFormats: {
+                            day: 'YY MMM DD'
+                          },
+                        },
+                      }]
+                    }
+                  }
+                });
+            });
           }
         }
         for (let i = 1; i < e3table.rows.length; ++i) {

@@ -32,7 +32,13 @@ class WikiEndpoint():
         
         latest_ep: str = "{}/{}".format(WikiEndpoint._OSRS_WIKI_API, "latest")
         url: str = "{}?id={}".format(latest_ep, id)
-
         res = WikiEndpoint.session().get(url).json()['data'][str(id)]
+        return res
+    
+    @staticmethod
+    def fetch_timeseries_5m(id: int):
 
+        ts_ep: str = "{}/{}".format(WikiEndpoint._OSRS_WIKI_API, "timeseries")
+        url = "{}?id={}&timestep=5m".format(ts_ep, id)
+        res = WikiEndpoint.session().get(url).json()
         return res

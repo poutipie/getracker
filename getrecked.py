@@ -1,10 +1,12 @@
 from getrecked import app
-from flask import jsonify, render_template, request
+from flask import jsonify, render_template, request, send_from_directory
 import time
 from datetime import datetime
 from dataclasses import dataclass
 import requests
 from typing import List
+import os
+import json
 
 from .commons import Commons
 from .db.database import Database
@@ -48,7 +50,31 @@ def root():
 @app.route('/graph_data', methods=["POST"])
 def graph_data():
     item_name = request.get_json()['item_name']
-    return "{} is a nice item".format(item_name)
+    item_id = int(request.get_json()['item_id'])
+    return jsonify(make_data_for_graph(item_id))
+    #return "{} with id {} is a nice item".format(item_name, item_id)
+
+def make_data_for_graph(item_id: int):
+    ret = "{}"
+    graph_data = WikiEndpoint.fetch_timeseries_5m(int(item_id))
+
+    data = graph_data['data']
+
+    high_prices = []
+    hp_timestamps = []
+
+    for entry in data:
+        if entry['avgHighPrice']:
+            high_prices.append(entry['avgHighPrice'])
+            _seconds = int(entry['timestamp'])
+            lbl = datetime.fromtimestamp(_seconds).strftime('%Y/%m/%d %H:%M:%S')
+            hp_timestamps.append(lbl)
+
+    ret = {
+        "price": high_prices,
+        "timestamp": hp_timestamps
+    }
+    return ret
 
 def make_data_for_demograph() -> (list, list):
 
