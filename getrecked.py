@@ -1,5 +1,5 @@
 from getrecked import app
-from flask import jsonify, render_template
+from flask import jsonify, render_template, request
 import time
 from datetime import datetime
 from dataclasses import dataclass
@@ -44,6 +44,11 @@ def root():
         items=items, 
         entry3items=entry3items
     )
+
+@app.route('/graph_data', methods=["POST"])
+def graph_data():
+    item_name = request.get_json()['item_name']
+    return "{} is a nice item".format(item_name)
 
 def make_data_for_demograph() -> (list, list):
 

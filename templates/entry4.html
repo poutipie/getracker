@@ -14,5 +14,41 @@
       <em>https://prices.runescape.wiki/api/v1/osrs/timeseries?id=10344&timestep=5m</em>
 
     </p>
+
+    <ul id="entry4testlist">
+      <li>Coffee</li>
+      <li>Tea</li>
+      <li>Milk</li>
+    </ul> 
+
+    <script>
+      
+      function addRowHandlers() {
+        let e3table = document.getElementById("entry3table");
+        let handler_deco = function(row) {
+          return function() {
+            let httpx = new XMLHttpRequest();
+            httpx.open("POST", "graph_data", true);
+            httpx.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                let text = this.responseText;
+                let elem = document.getElementById("entry4testlist");
+                let entry = document.createElement('li');
+                entry.appendChild(document.createTextNode(text));
+                elem.appendChild(entry);
+              };
+            };
+            httpx.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            payload = `{"item_name": "${row.cells[0].innerText}"}`;
+            httpx.send(payload);
+          }
+        }
+        for (let i = 1; i < e3table.rows.length; ++i) {
+            e3table.rows[i].onclick = handler_deco(e3table.rows[i]);
+        }
+      }
+      window.onload = addRowHandlers();
+
+    </script>
   </div> <!-- Entry Content -->
 </div > <!-- Entry -->
