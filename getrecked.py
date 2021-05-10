@@ -18,4 +18,4 @@ from .wiki_endpoint import WikiEndpoint
 
 @app.route('/')
 def root():
-    return "Hello"
+    return render_template("index.html")
