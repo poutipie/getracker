@@ -47,8 +47,8 @@ def journal():
         entry3items=entry3items
     )
 
-@app.route('/graph_data', methods=["POST"])
-def graph_data():
+@app.route('/journal/graph_data', methods=["POST"])
+def journal_graph_data():
     item_name = request.get_json()['item_name']
     item_id = int(request.get_json()['item_id'])
     return jsonify(make_data_for_graph(item_id))
@@ -96,7 +96,7 @@ def fetch_data_for_entry2table() -> List[Item]:
 
     db = Database()
     cur = db.get_db().cursor()
-    cur.execute("SELECT * FROM Item WHERE Item.name LIKE '%dragonstone%'")
+    cur.execute("SELECT * FROM Item WHERE Item.name LIKE '%mole%'")
     items = cur.fetchall()
     items_dc = []
     for item in items:

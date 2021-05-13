@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    background-color: rgb(245, 240, 240);
+}
+
+#title {
+    margin: 0;
+    padding-left: 10px;
+}
+
+#side_bar {
+    background-color: rgb(49, 46, 45);
+    display: block;
+
+    top: 0;
+    width: 50px;
+    height: 100%;
+    transition: 0.5s;
+
+    z-index: 1;
+    position: fixed !important;
+    overflow: auto;
+}
+
+@keyframes side_bar_content_visible {
+    0% {
+        opacity: 0%;
+    }
+    75% {
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+#side_bar_content {
+    display: none;
+    animation: side_bar_content_visible 0.5s;
+    color: rgb(245, 236, 236);
+}
+
+#burger {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 36px;
+    height: 50px;
+    width: 30px;
+    margin-left: 8px;
+    color: rgb(245, 236, 236);
+}
+
+#search {
+    display: none;
+    vertical-align: middle;
+    border-style: solid;
+    margin-left: 10px;
+    width: 180px;
+    height: 25px;
+    animation: side_bar_content_visible 0.5s;
+}
+
+#content {
+    padding-top: 10px;
+    transition: 0.5s;
+    margin-left: 50px;
+}
+
+#description {
+    padding: 10px 10px;
+}
+
+#main_table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#main_table td, #main_table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#main_table tr:nth-child(even){background-color: #f2f2f2;}
+
+#main_table tr:hover {background-color: #ddd;}
+
+#main_table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(49, 46, 45);
+    color: white;
+}
+
+#main_chart {
+    width: 100%;
+    max-height: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.chart_container {
+    margin-top: 20px;
+    background-color: white;
+    width: 80%;
+    height: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+*, ::before, ::after {
+    box-sizing: inherit;
+}
