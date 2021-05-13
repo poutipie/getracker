@@ -7,16 +7,26 @@ export class MyTable {
 
         this.table = document.getElementById(table_id);
         this.select_item_cb = function(item_id) {};
-        XHttpBackEnd.fetch_items().then(items => this.update_table(items));
+        MyTable.update(this);
     }
 
     set_select_item_cb(cb) {
         this.select_item_cb = cb;
     }
 
-    update_table(items) {
+    static update(self, filter = '') {
+        XHttpBackEnd.fetch_items(filter)
+        .then(items => self._backend_update(items));
+    }
+
+    _backend_update(items) {
         this.clear_table();
         this.add_items(items);
+
+        if (this.table.rows.length > 1) {
+            let item_id = this.table.rows[1].cells[1].innerHTML;
+            this.select_item_cb(item_id);
+        }
     }
 
     clear_table() {
@@ -36,7 +46,6 @@ export class MyTable {
                 return function() {
                     let item_id = row.cells[1].innerHTML;
                     self.select_item_cb(item_id);
-                    //fetch_chart_5m(item_id).then(item_data => draw_chart(item_data));
                 }
             }
             row.onclick = handler_deco(this, row);

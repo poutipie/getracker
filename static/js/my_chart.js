@@ -39,7 +39,7 @@ export class MyChart {
                 ]
             },
             options: {
-            responsive: false,
+            responsive: true,
             scales: {
                 xAxes: [{
                 type: 'time',

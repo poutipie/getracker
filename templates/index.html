@@ -13,11 +13,11 @@
   <div id="side_bar">
     <div id="side_bar_top">
       <span id="burger" onclick="side_toggle()">&#9776;</span>
-      <input type="text" id="search">
+      <input type="text" id="search_old">
     </div>
     <div id="side_bar_content">
       <p>Search:</p>
-      <input type="text">
+      <input type="text" id="search">
     </div>
   </div>
   
@@ -55,12 +55,12 @@
       document.getElementById("content").style.marginLeft = "250px";
       document.getElementById("side_bar").style.width = "250px";
       document.getElementById("side_bar_content").style.display = "block";
-      document.getElementById("search").style.display = "inline-block";
+      document.getElementById("search_old").style.display = "inline-block";
     } else {
       document.getElementById("content").style.marginLeft = "50px";
       document.getElementById("side_bar").style.width = "50px";
       document.getElementById("side_bar_content").style.display = "none";
-      document.getElementById("search").style.display = "none";
+      document.getElementById("search_old").style.display = "none";
     };
     toggleopen = !toggleopen;
   }

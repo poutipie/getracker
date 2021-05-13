@@ -25,9 +25,16 @@ def root():
 @app.route('/item_data', methods=["POST"])
 def item_data() -> List[Item]:
 
+    filter: str = request.get_json()['filter']
+
     db = Database()
     cur = db.get_db().cursor()
-    cur.execute("SELECT * FROM Item LIMIT 20;")
+    if filter == '':
+        query = "SELECT * FROM Item LIMIT 20;"
+    else:
+        query = "SELECT * FROM Item WHERE Item.name LIKE '%{}%' LIMIT 20;".format(filter)
+
+    cur.execute(query)
     items_raw: tuple = cur.fetchall()
     items: list = [Item(*item)._asdict() for item in items_raw]
 
