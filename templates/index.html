@@ -7,9 +7,6 @@
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/getrecked.ico') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js""></script>
-  <script src="{{ url_for('static', filename='scripts/ajax.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/main_table.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/main_chart.js') }}"></script>
 </head>
 <body>
 
@@ -44,13 +41,6 @@
       </tr>
     </table>
 
-    <script>
-      window.onload = function() {
-        fetch_items().then(items => update_table(items));
-        fetch_chart_5m(2).then(item_data => draw_chart(item_data));
-      }
-    </script>
-
     <div class="chart_container">
       <canvas id="main_chart"></canvas>
     </div>
@@ -76,5 +66,7 @@
   }
   </script>
   
+  <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
   </body>
 </html>
