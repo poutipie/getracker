@@ -28,6 +28,11 @@ class WikiEndpoint():
         return WikiEndpoint.session().get(url).json()['data']
 
     @staticmethod
+    def fetch_latest_prices():
+        url: str = "{}/{}".format(WikiEndpoint._OSRS_WIKI_API, "latest")
+        return WikiEndpoint.session().get(url).json()['data']
+
+    @staticmethod
     def fetch_high_low_data(id: int):
         
         latest_ep: str = "{}/{}".format(WikiEndpoint._OSRS_WIKI_API, "latest")

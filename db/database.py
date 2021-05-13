@@ -6,6 +6,7 @@ from typing import Optional
 
 from .schema.item import Item, ItemIndexTime
 from .schema.volume import Volume, VolumeIndexTime
+from .schema.price import Price, PriceIndexTime
 from ..wiki_endpoint import WikiEndpoint
 
 class Database():
@@ -17,21 +18,18 @@ class Database():
     _DB_FILE = os.path.join(_DATA_DIR, 'database.db')
     _SCHEMA_FILE =  os.path.join(_SCHEMA_DIR, "schema.sql")
 
-    def __init__(self):
+    @staticmethod
+    def connect() -> sqlite3.Connection:
 
-        self._conn: sqlite3.Connection = None
-        self._conn = sqlite3.connect(Database._DB_FILE)
-
-    def __del__(self):
-
-        if self._conn is not None:
-            self._conn.close()
-            self._conn = None
-
-    def get_db(self) -> sqlite3.Connection:
-
-        return self._conn
+        db = sqlite3.Connection = None
+        db = sqlite3.connect(Database._DB_FILE)
+        return db
     
+    @staticmethod
+    def disconnect(db: sqlite3.Connection) -> None:
+
+        db.close()
+        db = None
 
     @staticmethod
     def init_schema(db: sqlite3.Connection):
@@ -44,33 +42,44 @@ class Database():
         cursor.executescript(schema_txt)
         db.commit()
 
+    @staticmethod
+    def osrs_prices_reindex_needed(db: sqlite3.Connection) -> bool:
+        cur = db.cursor()
+        cur.execute("SELECT * FROM PriceIndexTime")
+        _idx_t = cur.fetchall()
+
+        t_since = None if not _idx_t else Database.time_since(_idx_t[0][1])
+        item_interval = timedelta(minutes=2)
+
+        return not t_since or len(_idx_t) > 1 or t_since >= item_interval
 
     @staticmethod
-    def reindex_osrs_wiki(db: sqlite3.Connection):
+    def reindex_osrs_prices(db: sqlite3.Connection):
 
-        if Database.osrs_items_reindex_needed(db):
-            Database.reindex_osrs_items(db)
+        cur = db.cursor()
+        cur.execute("DELETE FROM Price WHERE TRUE")
+        cur.execute("DELETE FROM PriceIndexTime WHERE TRUE")
 
-        if Database.osrs_volumes_reindex_needed(db):
-            Database.reindex_osrs_volumes(db) 
+        prices_json = WikiEndpoint.fetch_latest_prices()
+
+        for price_data in prices_json.items():
+            Price.insert(price_data, db)
+        
+        PriceIndexTime.insert(db)
+        db.commit()
+
 
     @staticmethod
     def osrs_items_reindex_needed(db: sqlite3.Connection) -> bool:
 
         cur = db.cursor()
         cur.execute("SELECT * FROM ItemIndexTime")
-        item_idx_t = cur.fetchall()
+        _idx_t = cur.fetchall()
 
-        t_since: Optional[timedelta] = None
-        if item_idx_t:
-            f = '%Y-%m-%d %H:%M:%S'
-            utc_then = datetime.strptime(item_idx_t[0][1], f)
-            utc_now = datetime.utcnow()
-            t_since = (utc_now - utc_then)
-
+        t_since = None if not _idx_t else Database.time_since(_idx_t[0][1])
         item_interval = timedelta(hours=3)
 
-        return not t_since or len(item_idx_t) > 1 or t_since >= item_interval
+        return not t_since or len(_idx_t) > 1 or t_since >= item_interval
 
     @staticmethod
     def reindex_osrs_items(db: sqlite3.Connection):
@@ -91,18 +100,11 @@ class Database():
         
         cur = db.cursor()
         cur.execute("SELECT * FROM VolumeIndexTime")
-        vol_idx_t = cur.fetchall()
+        _idx_t = cur.fetchall()
 
-        t_since: Optional[timedelta] = None
-        if vol_idx_t:
-            f = '%Y-%m-%d %H:%M:%S'
-            utc_then = datetime.strptime(vol_idx_t[0][1], f)
-            utc_now = datetime.utcnow()
-            t_since = (utc_now - utc_then)
-
+        t_since = None if not _idx_t else Database.time_since(_idx_t[0][1])
         vol_interval = timedelta(hours=6)
-
-        return not vol_idx_t or len(vol_idx_t) > 1 or t_since >= vol_interval
+        return not _idx_t or len(_idx_t) > 1 or t_since >= vol_interval
 
     @staticmethod
     def reindex_osrs_volumes(db: sqlite3.Connection):
@@ -117,3 +119,15 @@ class Database():
             Volume.insert(int(item_id), volume, db)
         VolumeIndexTime.insert(db)
         db.commit()
+
+
+    @staticmethod
+    def time_since(utc_then_timestamp: Optional[str]):
+
+        if utc_then_timestamp is None:
+            return None
+
+        f = '%Y-%m-%d %H:%M:%S'
+        utc_then = datetime.strptime(utc_then_timestamp, f)
+        utc_now = datetime.utcnow()
+        return (utc_now - utc_then)

@@ -1,4 +1,5 @@
 from pdb import Pdb
+import sqlite3
 import time
 from datetime import datetime
 from dataclasses import dataclass
@@ -25,8 +26,8 @@ def item_data() -> List[Item]:
 
     filter: str = request.get_json()['filter']
 
-    db = Database()
-    cur = db.get_db().cursor()
+    db: sqlite3.Connection = Database.connect()
+    cur = db.cursor()
     if filter == '':
         query = "SELECT * FROM Item LIMIT 20;"
     else:
@@ -34,6 +35,7 @@ def item_data() -> List[Item]:
 
     cur.execute(query)
     items_raw: tuple = cur.fetchall()
+    Database.disconnect(db)
     items: list = [Item(*item)._asdict() for item in items_raw]
 
     return jsonify(items)
@@ -77,8 +79,9 @@ def _format_graph_data(item, api_data: list) -> list:
 
 def _fetch_item_from_db(item_id: int) -> Item:
 
-    db = Database()
-    cur = db.get_db().cursor()
+    db: sqlite3.Connection = Database.connect()
+    cur = db.cursor()
     cur.execute("SELECT * FROM Item Where Item.id == ?", (str(item_id),))
     item_raw: tuple = cur.fetchall()[0]
+    Database.disconnect(db)
     return Item(*item_raw)
