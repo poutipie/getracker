@@ -54,6 +54,9 @@ export class MyTable {
 
     _insert_cells(row, item) {
 
+        var profit = item.price_high - item.price_low;
+        var roi = (profit / item.price_high) * 100;
+
         var cell = row.insertCell(0);
         cell.innerHTML = item.name;
     
@@ -64,16 +67,30 @@ export class MyTable {
         cell.innerHTML = item.value;
     
         var cell = row.insertCell(3);
+        cell.innerHTML = item.price_high;
+
+        var cell = row.insertCell(4);
+        cell.innerHTML = item.price_low;
+
+        var cell = row.insertCell(5);
+        cell.innerHTML = profit;
+
+        var cell = row.insertCell(6);
+        cell.innerHTML = Number.parseFloat(roi).toPrecision(4) + "%";
+
+        var cell = row.insertCell(7);
+        cell.innerHTML = item.volume;
+
+        var cell = row.insertCell(8);
         cell.innerHTML = item.ge_limit;
     
-        var cell = row.insertCell(4);
+        var cell = row.insertCell(9);
         cell.innerHTML = item.members;
     
-        var cell = row.insertCell(5);
+        var cell = row.insertCell(10);
         cell.innerHTML = item.low_alch;
     
-        var cell = row.insertCell(6);
+        var cell = row.insertCell(11);
         cell.innerHTML = item.high_alch;
     }
-
 }

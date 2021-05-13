@@ -3,7 +3,7 @@ import sqlite3
 import time
 from datetime import datetime
 from dataclasses import dataclass
-from typing import List
+from typing import List, NamedTuple
 import pandas
 
 from getrecked import app
@@ -20,6 +20,17 @@ from .wiki_endpoint import WikiEndpoint
 def root():
     return render_template("index.html")
 
+class ItemData(NamedTuple):
+    id: int
+    name: str
+    value: int
+    ge_limit: int
+    members: int
+    low_alch: int
+    high_alch: int
+    price_high: int
+    price_low: int
+    volume: int
 
 @app.route('/item_data', methods=["POST"])
 def item_data() -> List[Item]:
@@ -28,15 +39,27 @@ def item_data() -> List[Item]:
 
     db: sqlite3.Connection = Database.connect()
     cur = db.cursor()
-    if filter == '':
-        query = "SELECT * FROM Item LIMIT 20;"
-    else:
-        query = "SELECT * FROM Item WHERE Item.name LIKE '%{}%' LIMIT 20;".format(filter)
+
+    query = ( 
+        "SELECT "
+          "Item.id, Item.name, Item.value, Item.ge_limit, Item.members, "
+          "Item.low_alch, Item.high_alch, Price.high, Price.low, Volume.volume "
+        "FROM "
+          "Item, Price, Volume "
+        "WHERE "
+          "Item.id == Price.item_id AND "
+          "Item.id == Volume.item_id"
+    )
+
+    if filter != '':
+        query += " AND Item.name LIKE '%{}%'".format(filter)
+    
+    query += " LIMIT 20;"
 
     cur.execute(query)
     items_raw: tuple = cur.fetchall()
     Database.disconnect(db)
-    items: list = [Item(*item)._asdict() for item in items_raw]
+    items: list = [ItemData(*item)._asdict() for item in items_raw]
 
     return jsonify(items)
 
