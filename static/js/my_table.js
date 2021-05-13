@@ -76,7 +76,7 @@ export class MyTable {
         cell.innerHTML = profit;
 
         var cell = row.insertCell(6);
-        cell.innerHTML = Number.parseFloat(roi).toPrecision(4) + "%";
+        cell.innerHTML = Number.parseFloat(roi).toPrecision(2) + "%";
 
         var cell = row.insertCell(7);
         cell.innerHTML = item.volume;
