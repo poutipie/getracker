@@ -4,8 +4,14 @@ import {XHttpBackEnd} from "./xhttp_backend.js";
 export class MyTable {
 
     constructor(table_id) {
+
         this.table = document.getElementById(table_id);
+        this.select_item_cb = function(item_id) {};
         XHttpBackEnd.fetch_items().then(items => this.update_table(items));
+    }
+
+    set_select_item_cb(cb) {
+        this.select_item_cb = cb;
     }
 
     update_table(items) {
@@ -25,14 +31,15 @@ export class MyTable {
             var row = this.table.insertRow(-1);
             this._insert_cells(row, item);
     
-            //var handler_deco = function(row) {
-            //    return function() {
-            //        let item_id = row.cells[1].innerHTML;
-            //        fetch_chart_5m(item_id).then(item_data => draw_chart(item_data));   
-            //    }
-            //}
-    
-            //row.onclick = handler_deco(row);
+            
+            var handler_deco = function(self, row) {
+                return function() {
+                    let item_id = row.cells[1].innerHTML;
+                    self.select_item_cb(item_id);
+                    //fetch_chart_5m(item_id).then(item_data => draw_chart(item_data));
+                }
+            }
+            row.onclick = handler_deco(this, row);
         });
     }
 

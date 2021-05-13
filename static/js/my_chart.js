@@ -7,10 +7,20 @@ export class MyChart {
         this.context = document.getElementById(canvas_id).getContext("2d");
         this.chart = null;
 
-        XHttpBackEnd.fetch_chart_5m(2).then(data => this.draw(data));
+        //XHttpBackEnd.fetch_chart_5m(2).then(data => this._draw(data));
     }
 
-    draw(item_data) {
+    /**
+     * 
+     * @param {MyChart} self 
+     * @param {int} item_id 
+     */
+    static draw(self, item_id) {
+        XHttpBackEnd.fetch_chart_5m(item_id)
+        .then(dat => self._backend_draw(dat));
+    }
+
+    _backend_draw(item_data) {
     
         if (this.chart != null) {
             this.chart.destroy();
