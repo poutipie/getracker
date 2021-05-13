@@ -35,6 +35,7 @@ body {
 }
 
 #side_bar_content {
+    margin-left: 5px;
     display: none;
     animation: side_bar_content_visible 0.5s;
     color: rgb(245, 236, 236);
@@ -51,14 +52,10 @@ body {
     color: rgb(245, 236, 236);
 }
 
-#search_old {
-    display: none;
-    vertical-align: middle;
-    border-style: solid;
-    margin-left: 10px;
-    width: 180px;
+#search {
+    margin-left: 5px;
+    width: 85%;
     height: 25px;
-    animation: side_bar_content_visible 0.5s;
 }
 
 #content {
