@@ -20,21 +20,27 @@ export class MyChart {
         .then(dat => self._backend_draw(dat));
     }
 
-    _backend_draw(item_data) {
-    
+    _backend_draw(graph_data) {
+
         if (this.chart != null) {
             this.chart.destroy();
         }
         this.chart = new Chart(this.context, {
             type: "line",
             data: {
-                labels: item_data.high_timestamps,
+                labels: graph_data.timestamps,
                 datasets: [
                     {
-                    label: item_data.item_name,
-                    data: item_data.high_prices,
-                    borderColor: "rgb(75, 192, 192)",
-                    lineTension: 0.1,
+                        label: graph_data.item_name + " - sell",
+                        data: graph_data.high_prices,
+                        borderColor: "rgb(214, 176, 111)",
+                        lineTension: 0.1,
+                    },
+                    {
+                        label: graph_data.item_name + " - buy",
+                        data: graph_data.low_prices,
+                        borderColor: "rgb(111, 127, 214)",
+                        lineTension: 0.1,
                     }
                 ]
             },

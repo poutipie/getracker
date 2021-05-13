@@ -2,10 +2,8 @@ from pdb import Pdb
 import time
 from datetime import datetime
 from dataclasses import dataclass
-import requests
 from typing import List
-import os
-import json
+import pandas
 
 from getrecked import app
 from flask import jsonify, render_template, request, send_from_directory
@@ -45,39 +43,42 @@ def item_data() -> List[Item]:
 def chart_5m():
 
     item_id = int(request.get_json()['item_id'])
-    return jsonify(make_data_for_graph(item_id))
-
-def make_data_for_graph(item_id: int):
-
     item: Item = _fetch_item_from_db(item_id)
 
-    graph_data = WikiEndpoint.fetch_timeseries_5m(int(item_id))
-    data = graph_data['data']
+    api_data = WikiEndpoint.fetch_timeseries_5m(item.id)
+    graph_data = _format_graph_data(item, api_data)
 
+    return jsonify(graph_data)
+
+def _format_graph_data(item, api_data: list) -> list:
+    
+    data = api_data['data']
+
+    df = pandas.DataFrame(data)
+    df = df.set_index('timestamp')
+    df_interp = df.interpolate().dropna()
+
+    timestamps = []
     high_prices = []
-    high_timestamps = []
-
-    for entry in data:
-        if entry['avgHighPrice']:
-            high_prices.append(entry['avgHighPrice'])
-            _seconds = int(entry['timestamp'])
-            lbl = datetime.fromtimestamp(_seconds).strftime('%Y/%m/%d %H:%M:%S')
-            high_timestamps.append(lbl)
-
-
+    low_prices = []
+    for row in df_interp.iterrows():
+        entry = row[1]
+        lbl = datetime.fromtimestamp(entry.name).strftime('%Y/%m/%d %H:%M:%S')
+        timestamps.append(lbl)
+        high_prices.append(entry['avgHighPrice'])
+        low_prices.append(entry['avgLowPrice'])
+    
     return {
         "item_name": item.name,
-        "high_timestamps": high_timestamps,
-        "high_prices": high_prices
+        "timestamps": timestamps,
+        "high_prices": high_prices,
+        "low_prices": low_prices
     }
 
 def _fetch_item_from_db(item_id: int) -> Item:
 
     db = Database()
     cur = db.get_db().cursor()
-
-    #import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
-
     cur.execute("SELECT * FROM Item Where Item.id == ?", (str(item_id),))
     item_raw: tuple = cur.fetchall()[0]
     return Item(*item_raw)
