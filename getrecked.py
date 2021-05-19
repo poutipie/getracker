@@ -54,7 +54,7 @@ def item_data() -> List[Item]:
     if filter != '':
         query += " AND Item.name LIKE '%{}%'".format(filter)
     
-    query += " LIMIT 10;"
+    query += " LIMIT 50;"
 
     cur.execute(query)
     items_raw: tuple = cur.fetchall()

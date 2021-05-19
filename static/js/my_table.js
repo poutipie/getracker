@@ -6,6 +6,7 @@ export class MyTable {
     constructor(table_id) {
 
         this.table = document.getElementById(table_id);
+        this.tbody = this.table.getElementsByTagName('tbody')[0];
         this.select_item_cb = function(item_id) {};
         MyTable.update(this);
     }
@@ -23,22 +24,22 @@ export class MyTable {
         this.clear_table();
         this.add_items(items);
 
-        if (this.table.rows.length > 1) {
-            let item_id = this.table.rows[1].cells[1].innerHTML;
+        if (this.tbody.rows.length > 0) {
+            let item_id = this.tbody.rows[0].cells[1].innerHTML;
             this.select_item_cb(item_id);
         }
     }
 
     clear_table() {
-        while(this.table.rows.length > 1) {
-            this.table.deleteRow(1);
+        while(this.tbody.rows.length > 0) {
+            this.tbody.deleteRow(0);
         }
     }
     
     add_items(items) {
         
         items.forEach( (item) => {
-            var row = this.table.insertRow(-1);
+            var row = this.tbody.insertRow(-1);
             this._insert_cells(row, item);
     
             
