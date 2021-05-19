@@ -68,7 +68,6 @@ body {
     padding: 10px 10px;
 }
 
-/* Fix table head */
 #table_container {
     margin-left: auto;
     margin-right: auto;
@@ -118,4 +117,30 @@ body {
     height: 50%;
     margin-left: auto;
     margin-right: auto;
+}
+
+#timesteps ul {
+    list-style-type: none;
+    overflow: hidden;
+    margin-left: 0px;
+    padding: 0px;
+}
+
+#timesteps span {
+    float: left;
+    margin: 4px;
+    padding: 0px;
+}
+
+#timesteps li {
+    float: left;
+    border: 1px solid #ddd;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#timesteps li:hover {
+    float: left;
+    background-color: #8f8f8f;
 }

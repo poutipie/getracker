@@ -37,6 +37,10 @@ def item_data() -> List[Item]:
 
     filter: str = request.get_json()['filter']
 
+    timestep = '5m'
+    if 'timestep' in request.get_json():
+        timestep = request.get_json()['timestep']
+
     db: sqlite3.Connection = Database.connect()
     cur = db.cursor()
 
