@@ -1,4 +1,4 @@
-from getrecked import app, db
+from getracker import app, db
 from .commons import Commons
 
 import requests

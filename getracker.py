@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import List, NamedTuple
 import pandas
 
-from getrecked import app
+from getracker import app
 from flask import jsonify, render_template, request, send_from_directory
 
 from .commons import Commons
